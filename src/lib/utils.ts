@@ -6,10 +6,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Format a date as "X hours/days ago". */
-export function timeAgo(date: Date | string): string {
+/** Format a date as "X hours/days ago". Safe against Next.js SSR/prerendering. */
+export function timeAgo(date: Date | string, nowMs?: number): string {
+  if (typeof window === "undefined" && nowMs === undefined) {
+    return "";
+  }
   const d = typeof date === "string" ? new Date(date) : date;
-  const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
+  const current = nowMs !== undefined ? nowMs : (typeof window !== "undefined" ? Date.now() : d.getTime());
+  const seconds = Math.max(0, Math.floor((current - d.getTime()) / 1000));
   if (seconds < 60) return `${seconds}s ago`;
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;

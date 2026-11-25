@@ -7,7 +7,8 @@ export function TimeAgo({ date }: { date: Date | string }) {
   const [formatted, setFormatted] = useState<string>("");
 
   useEffect(() => {
-    setFormatted(timeAgo(date));
+    // Only execute on client inside useEffect, avoiding Next.js prerender checks
+    setFormatted(timeAgo(date, Date.now()));
   }, [date]);
 
   if (!formatted) {

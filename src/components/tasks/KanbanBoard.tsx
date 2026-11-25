@@ -41,10 +41,10 @@ interface ColumnDef {
 }
 
 const COLUMNS: ColumnDef[] = [
-  { id: "OPEN", label: "Backlog", statusMatch: ["NEW"], icon: "○" },
-  { id: "ACTIVE", label: "In Progress", statusMatch: ["IN_PROGRESS"], icon: "⊙" },
-  { id: "DONE", label: "Done", statusMatch: ["FIXED", "CLOSED"], icon: "✔" },
-  { id: "CANCELLED", label: "Cancelled", statusMatch: ["CANCELLED"], icon: "⊗" },
+  { id: "OPEN", label: "Open", statusMatch: ["NEW"], icon: "○" },
+  { id: "ACTIVE", label: "Active", statusMatch: ["IN_PROGRESS"], icon: "⊙" },
+  { id: "DONE", label: "Done", statusMatch: ["FIXED"], icon: "✔" },
+  { id: "CANCELLED", label: "Cancelled", statusMatch: ["CLOSED", "CANCELLED"], icon: "⊗" },
 ];
 
 export function KanbanBoard({ tasks, onSelectTask, onUpdateStatus }: Props) {
@@ -219,23 +219,48 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
         {task.title}
       </h3>
 
-      {/* Footer: Assignee & Status dot */}
-      <div className="flex items-center justify-between pt-1 text-xs border-t border-[#30363d]/50">
-        <span className="text-[11px] text-[#8b949e] truncate max-w-[130px]">
-          {task.assignee ? `@${task.assignee.name.split(" ")[0]}` : "Unassigned"}
+      {/* Footer: Assignee & Status indicator */}
+      <div className="flex items-center justify-between pt-1.5 text-xs border-t border-[#30363d]/50">
+        <span className="text-[11px] text-[#8b949e] flex items-center gap-1 truncate max-w-[150px]">
+          {task.assignee ? (
+            <>
+              <span className="text-xs">👤</span>
+              <span className="truncate">{task.assignee.name}</span>
+            </>
+          ) : (
+            <span className="text-gray-500">Unassigned</span>
+          )}
         </span>
 
         <span
           className={cn(
-            "text-[10px] font-medium px-2 py-0.5 rounded-full border",
-            task.status === "FIXED" || task.status === "CLOSED"
-              ? "text-[#3fb950] border-[#2ea043]/30 bg-[#238636]/15"
+            "text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1",
+            task.status === "FIXED"
+              ? "text-purple-400 border border-purple-500/30 bg-purple-950/20"
+              : task.status === "CLOSED"
+              ? "text-emerald-400 border border-emerald-500/30 bg-emerald-950/20"
               : task.status === "IN_PROGRESS"
-              ? "text-[#58a6ff] border-[#388bfd]/30 bg-[#1f6feb]/15"
-              : "text-[#8b949e] border-[#30363d] bg-[#21262d]"
+              ? "text-amber-300 border border-amber-500/30 bg-amber-950/20"
+              : "text-slate-400 border border-slate-700 bg-slate-800/40"
           )}
         >
-          {task.status === "IN_PROGRESS" ? "In progress" : task.status === "FIXED" ? "Done" : task.status}
+          {task.status === "IN_PROGRESS" ? (
+            <>
+              <span className="text-amber-400 text-[10px]">⊙</span> In progress
+            </>
+          ) : task.status === "FIXED" ? (
+            <>
+              <span className="text-purple-400 text-[10px]">✔</span> Fixed
+            </>
+          ) : task.status === "CLOSED" ? (
+            <>
+              <span className="text-emerald-400 text-[10px]">✔</span> Closed
+            </>
+          ) : (
+            <>
+              <span className="text-slate-400 text-[10px]">○</span> New
+            </>
+          )}
         </span>
       </div>
     </div>
