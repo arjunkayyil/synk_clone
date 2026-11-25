@@ -41,8 +41,8 @@ interface ColumnDef {
 }
 
 const COLUMNS: ColumnDef[] = [
-  { id: "OPEN", label: "Open", statusMatch: ["NEW"], icon: "○" },
-  { id: "ACTIVE", label: "Active", statusMatch: ["IN_PROGRESS"], icon: "⊙" },
+  { id: "OPEN", label: "Backlog", statusMatch: ["NEW"], icon: "○" },
+  { id: "ACTIVE", label: "In Progress", statusMatch: ["IN_PROGRESS"], icon: "⊙" },
   { id: "DONE", label: "Done", statusMatch: ["FIXED", "CLOSED"], icon: "✔" },
   { id: "CANCELLED", label: "Cancelled", statusMatch: ["CANCELLED"], icon: "⊗" },
 ];
@@ -196,44 +196,46 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
       {...listeners}
       onClick={onSelect}
       className={cn(
-        "p-4 rounded-xl border transition-all cursor-grab active:cursor-grabbing hover:border-blue-500/50 space-y-3 shadow-sm",
-        "bg-(--bg-panel) border-(--border)"
+        "p-3.5 rounded-xl border transition-all cursor-grab active:cursor-grabbing hover:border-[#58a6ff]/60 space-y-2.5 shadow-sm",
+        "bg-[#161b22] border-[#30363d]"
       )}
     >
       {/* Top Meta: ID, Badges */}
       <div className="flex items-center justify-between text-xs">
-        <span className="font-mono text-xs font-medium text-(--text-muted)">{displayId}</span>
+        <div className="flex items-center gap-1.5 font-mono text-xs text-[#8b949e]">
+          <span className="text-[#3fb950]">◎</span>
+          <span>{displayId}</span>
+        </div>
         <div className="flex items-center gap-1.5">
-          <Badge value={task.type} variant="type" className="text-[10px] px-1.5 py-0" />
-          <Badge value={task.priority} variant="priority" className="text-[10px] px-1.5 py-0" />
+          <Badge value={task.type} variant="type" className="text-[10px] px-2 py-0" />
+          <Badge value={task.priority} variant="priority" className="text-[10px] px-2 py-0" />
         </div>
       </div>
 
       {/* Title */}
       <h3
-        className="text-sm font-semibold leading-snug line-clamp-3"
-        style={{ color: "var(--text-primary)" }}
+        className="text-[13px] font-semibold leading-snug line-clamp-2 text-[#f0f6fc]"
       >
         {task.title}
       </h3>
 
       {/* Footer: Assignee & Status dot */}
-      <div className="flex items-center justify-between pt-1 text-xs">
-        <span className="text-xs text-(--text-muted) truncate max-w-[130px]">
-          {task.assignee ? `👤 ${task.assignee.name.split(" ")[0]}` : "Unassigned"}
+      <div className="flex items-center justify-between pt-1 text-xs border-t border-[#30363d]/50">
+        <span className="text-[11px] text-[#8b949e] truncate max-w-[130px]">
+          {task.assignee ? `@${task.assignee.name.split(" ")[0]}` : "Unassigned"}
         </span>
 
         <span
           className={cn(
-            "text-[11px] font-medium px-2 py-0.5 rounded-full border",
+            "text-[10px] font-medium px-2 py-0.5 rounded-full border",
             task.status === "FIXED" || task.status === "CLOSED"
-              ? "text-emerald-400 border-emerald-900/40 bg-emerald-950/30"
+              ? "text-[#3fb950] border-[#2ea043]/30 bg-[#238636]/15"
               : task.status === "IN_PROGRESS"
-              ? "text-blue-400 border-blue-900/40 bg-blue-950/30"
-              : "text-(--text-muted) border-(--border) bg-(--bg-hover)"
+              ? "text-[#58a6ff] border-[#388bfd]/30 bg-[#1f6feb]/15"
+              : "text-[#8b949e] border-[#30363d] bg-[#21262d]"
           )}
         >
-          {task.status === "IN_PROGRESS" ? "In progress" : task.status === "FIXED" ? "Fixed" : task.status}
+          {task.status === "IN_PROGRESS" ? "In progress" : task.status === "FIXED" ? "Done" : task.status}
         </span>
       </div>
     </div>

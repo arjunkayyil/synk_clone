@@ -1,34 +1,34 @@
 /**
  * src/components/ui/Badge.tsx
- * A small coloured badge for task type, priority, and status.
+ * Coloured badges matching GitHub Projects style tag pills.
  */
 import { cn } from "@/lib/utils";
 
 type BadgeVariant = "type" | "priority" | "status" | "default";
 
 const typeColors: Record<string, string> = {
-  BUG:   "bg-red-900/60 text-red-300 border border-red-700/50",
-  TASK:  "bg-blue-900/60 text-blue-300 border border-blue-700/50",
-  STORY: "bg-purple-900/60 text-purple-300 border border-purple-700/50",
+  BUG:   "bg-[#da3633]/20 text-[#f85149] border border-[#f85149]/40",
+  TASK:  "bg-[#1f6feb]/20 text-[#58a6ff] border border-[#388bfd]/40",
+  STORY: "bg-[#8957e5]/20 text-[#bc8cff] border border-[#a371f7]/40",
 };
 
 const priorityColors: Record<string, string> = {
-  P1: "bg-red-900/50 text-red-400 border border-red-700/40",
-  P2: "bg-amber-900/50 text-amber-400 border border-amber-700/40",
-  P3: "bg-slate-700/60 text-slate-400 border border-slate-600/40",
+  P1: "bg-[#da3633]/20 text-[#f85149] border border-[#f85149]/40",
+  P2: "bg-[#d29922]/20 text-[#e3b341] border border-[#d29922]/40",
+  P3: "bg-[#30363d]/50 text-[#8b949e] border border-[#30363d]",
 };
 
 const statusColors: Record<string, string> = {
-  NEW:         "bg-slate-700/60 text-slate-300 border border-slate-600/40",
-  IN_PROGRESS: "bg-blue-900/60 text-blue-300 border border-blue-700/50",
-  FIXED:       "bg-green-900/60 text-green-300 border border-green-700/50",
-  CLOSED:      "bg-slate-800/60 text-slate-500 border border-slate-700/40",
+  NEW:         "bg-[#30363d]/50 text-[#8b949e] border border-[#30363d]",
+  IN_PROGRESS: "bg-[#1f6feb]/20 text-[#58a6ff] border border-[#388bfd]/40",
+  FIXED:       "bg-[#238636]/20 text-[#3fb950] border border-[#2ea043]/40",
+  CLOSED:      "bg-[#8957e5]/20 text-[#bc8cff] border border-[#a371f7]/40",
 };
 
 const statusLabels: Record<string, string> = {
-  NEW:         "New",
-  IN_PROGRESS: "In Progress",
-  FIXED:       "Fixed",
+  NEW:         "Open",
+  IN_PROGRESS: "Active",
+  FIXED:       "Done",
   CLOSED:      "Closed",
 };
 
@@ -39,7 +39,7 @@ interface BadgeProps {
 }
 
 export function Badge({ value, variant = "default", className }: BadgeProps) {
-  let colorClass = "bg-slate-700 text-slate-300";
+  let colorClass = "bg-[#21262d] text-[#c9d1d9] border border-[#30363d]";
   let label = value;
 
   if (variant === "type")     colorClass = typeColors[value]     ?? colorClass;
@@ -52,7 +52,7 @@ export function Badge({ value, variant = "default", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase",
+        "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium tracking-wide",
         colorClass,
         className
       )}
