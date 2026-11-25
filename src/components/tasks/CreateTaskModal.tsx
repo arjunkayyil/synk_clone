@@ -28,6 +28,8 @@ const SEVERITIES = ["Critical", "High", "Medium", "Low"];
 const ENVS       = ["Production", "Staging", "Development", "Local"];
 const OS_OPTIONS = ["macOS", "Windows", "Linux", "iOS", "Android"];
 const FREQUENCIES = ["Always", "Frequently", "Occasionally", "Rarely", "Once"];
+const CATEGORIES  = ["Development", "Design", "Testing", "Documentation", "Operations", "Research"];
+const SECTIONS    = ["No section", "Frontend", "Backend", "Infra", "Mobile"];
 
 const statusLabel: Record<string, string> = {
   NEW: "New", IN_PROGRESS: "In Progress", FIXED: "Fixed", CLOSED: "Closed",
@@ -66,10 +68,20 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Properties
-  const [status,     setStatus]     = useState("NEW");
-  const [priority,   setPriority]   = useState("P2");
-  const [assigneeId, setAssigneeId] = useState("");
+  // Task-specific form fields
+  const [category,    setCategory]    = useState("");
+  const [estimate,    setEstimate]    = useState("");
+  const [acceptance,  setAcceptance]  = useState("");
+
+  // Common properties
+  const [status,      setStatus]      = useState("NEW");
+  const [priority,    setPriority]    = useState("P2");
+  const [assigneeId,  setAssigneeId]  = useState("");
+  const [dueDate,     setDueDate]     = useState("");
+  const [section,     setSection]     = useState("No section");
+  const [labels,      setLabels]      = useState<string[]>([]);
+  const [newTagInput, setNewTagInput] = useState("");
+  const [showTagInput, setShowTagInput] = useState(false);
   const [createAnother, setCreateAnother] = useState(false);
 
   // Set default project once loaded
@@ -81,8 +93,9 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
   function reset() {
     setTitle(""); setDescription(""); setSeverity(""); setSteps("");
     setExpected(""); setActual(""); setModule(""); setEnvironment("");
-    setVersion(""); setBrowser(""); setOs(""); setFrequency(""); setAttachments([]); setStatus("NEW"); setPriority("P2");
-    setAssigneeId("");
+    setVersion(""); setBrowser(""); setOs(""); setFrequency(""); setAttachments([]);
+    setCategory(""); setEstimate(""); setAcceptance("");
+    setStatus("NEW"); setPriority("P2"); setAssigneeId(""); setDueDate(""); setSection("No section"); setLabels([]);
   }
 
   const mutation = useMutation({
@@ -213,11 +226,47 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
                 rows={3}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                placeholder={isBug ? "Add details, context, or reproduction steps…" : "Add details or context…"}
+                placeholder={isBug ? "Add details, context, or reproduction steps…" : "Add details, context, or reproduction steps…"}
                 className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/50 resize-y"
                 style={{ backgroundColor: "var(--bg-hover)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
               />
             </Field>
+
+            {/* Task-specific fields */}
+            {!isBug && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Category">
+                    <Select value={category} onChange={e => setCategory(e.target.value)}>
+                      <option value="">Select category…</option>
+                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </Select>
+                  </Field>
+                  <Field label="Estimate (hours)">
+                    <input
+                      type="number"
+                      step="0.5"
+                      placeholder="e.g. 4"
+                      value={estimate}
+                      onChange={e => setEstimate(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ backgroundColor: "var(--bg-hover)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Acceptance criteria">
+                  <textarea
+                    rows={3}
+                    value={acceptance}
+                    onChange={e => setAcceptance(e.target.value)}
+                    placeholder="List specific conditions for completion…"
+                    className="w-full px-3 py-2 rounded-lg text-sm outline-none resize-y focus:ring-2 focus:ring-blue-500/50"
+                    style={{ backgroundColor: "var(--bg-hover)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                  />
+                </Field>
+              </>
+            )}
 
             {/* Bug-specific fields */}
             {isBug && (
@@ -314,65 +363,66 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
                     </Select>
                   </Field>
                 </div>
-
-                <div className="space-y-1.5 pt-1">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
-                    Attachments
-                  </label>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    multiple
-                    className="hidden"
-                    onChange={e => {
-                      if (e.target.files) {
-                        setAttachments(prev => [...prev, ...Array.from(e.target.files || [])]);
-                      }
-                    }}
-                  />
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full rounded-xl border border-dashed py-6 px-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors hover:border-blue-500/50 hover:bg-(--bg-hover)"
-                    style={{ borderColor: "var(--border)", backgroundColor: "rgba(14, 22, 38, 0.4)" }}
-                  >
-                    <div className="flex items-center gap-2 text-sm text-(--text-secondary)">
-                      <UploadCloud size={18} className="text-blue-400" />
-                      <span>Drop images, video, or files — or <span className="text-blue-400 hover:underline">click to upload</span></span>
-                    </div>
-                  </div>
-
-                  {attachments.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {attachments.map((file, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border"
-                          style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text-secondary)" }}
-                        >
-                          <Paperclip size={12} className="text-(--text-muted)" />
-                          <span className="max-w-[150px] truncate">{file.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
-                            className="ml-1 text-(--text-muted) hover:text-red-400"
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
               </>
             )}
+
+            {/* Attachments Section - Common for both Bug and Task */}
+            <div className="space-y-1.5 pt-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
+                Attachments
+              </label>
+              <input
+                type="file"
+                ref={fileInputRef}
+                multiple
+                className="hidden"
+                onChange={e => {
+                  if (e.target.files) {
+                    setAttachments(prev => [...prev, ...Array.from(e.target.files || [])]);
+                  }
+                }}
+              />
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full rounded-xl border border-dashed py-6 px-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors hover:border-blue-500/50 hover:bg-(--bg-hover)"
+                style={{ borderColor: "var(--border)", backgroundColor: "rgba(14, 22, 38, 0.4)" }}
+              >
+                <div className="flex items-center gap-2 text-sm text-(--text-secondary)">
+                  <UploadCloud size={18} className="text-blue-400" />
+                  <span>Drop images, video, or files — or <span className="text-blue-400 hover:underline">click to upload</span></span>
+                </div>
+              </div>
+
+              {attachments.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {attachments.map((file, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border"
+                      style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text-secondary)" }}
+                    >
+                      <Paperclip size={12} className="text-(--text-muted)" />
+                      <span className="max-w-[150px] truncate">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
+                        className="ml-1 text-(--text-muted) hover:text-red-400"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ── Right pane: properties ── */}
           <div
-            className="w-60 shrink-0 border-l overflow-y-auto px-5 py-5 space-y-5"
+            className="w-64 shrink-0 border-l overflow-y-auto px-5 py-5 space-y-4"
             style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-(--text-muted)">
               Properties
             </p>
 
@@ -397,6 +447,92 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
                 <option value="">Unassigned</option>
                 {users.map((u: User) => (
                   <option key={u.id} value={u.id}>{u.name}</option>
+                ))}
+              </Select>
+            </Field>
+
+            <Field label="Due date">
+              <input
+                type="date"
+                value={dueDate}
+                onChange={e => setDueDate(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+                style={{ backgroundColor: "var(--bg-hover)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+              />
+            </Field>
+
+            <div>
+              <label className="block text-xs font-medium mb-1 text-(--text-secondary)">
+                Labels
+              </label>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {labels.map((lbl, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border"
+                    style={{ backgroundColor: "var(--bg-hover)", borderColor: "var(--border)", color: "var(--text-secondary)" }}
+                  >
+                    {lbl}
+                    <button
+                      type="button"
+                      onClick={() => setLabels(labels.filter((_, i) => i !== idx))}
+                      className="hover:text-red-400"
+                    >
+                      <X size={11} />
+                    </button>
+                  </span>
+                ))}
+                {showTagInput ? (
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="tag..."
+                    value={newTagInput}
+                    onChange={e => setNewTagInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" && newTagInput.trim()) {
+                        e.preventDefault();
+                        setLabels([...labels, newTagInput.trim()]);
+                        setNewTagInput("");
+                        setShowTagInput(false);
+                      } else if (e.key === "Escape") {
+                        setShowTagInput(false);
+                      }
+                    }}
+                    onBlur={() => {
+                      if (newTagInput.trim()) setLabels([...labels, newTagInput.trim()]);
+                      setNewTagInput("");
+                      setShowTagInput(false);
+                    }}
+                    className="w-20 px-1.5 py-0.5 text-xs rounded border outline-none bg-transparent"
+                    style={{ borderColor: "var(--border)", color: "var(--text-primary)" }}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowTagInput(true)}
+                    className="text-xs px-2 py-0.5 rounded border border-dashed hover:border-blue-500 hover:text-blue-400 transition-colors"
+                    style={{ borderColor: "var(--border)", color: "var(--text-muted)" }}
+                  >
+                    + Label
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <Field label="Parent item">
+              <div
+                className="w-full px-3 py-2 rounded-lg text-xs flex items-center gap-2 cursor-not-allowed select-none border"
+                style={{ backgroundColor: "var(--bg-hover)", borderColor: "var(--border)", color: "var(--text-muted)" }}
+              >
+                <span>None (top-level item)</span>
+              </div>
+            </Field>
+
+            <Field label="Section">
+              <Select value={section} onChange={e => setSection(e.target.value)}>
+                {SECTIONS.map(s => (
+                  <option key={s} value={s}>{s}</option>
                 ))}
               </Select>
             </Field>
