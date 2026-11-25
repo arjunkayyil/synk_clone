@@ -73,7 +73,7 @@ export default function TasksPage() {
   const { data: session } = useSession();
 
   // Tab & Filter states
-  const [projectFilter,  setProjectFilter]  = useState("LB"); // "ALL" | "LB"
+  const [projectFilter,  setProjectFilter]  = useState("ALL"); // "ALL" | "LB"
   const [activeType,     setActiveType]     = useState("ALL");
   const [activeStatus,   setActiveStatus]   = useState("ALL");
   const [assigneeFilter, setAssigneeFilter] = useState("ALL"); // "ALL" | "ME" | "UNASSIGNED" | user.name | user.id
@@ -210,45 +210,15 @@ export default function TasksPage() {
           </h1>
         </div>
 
-        {/* Right workspace pills & + New item button */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-(--bg-card) border border-(--border)">
-            <button
-              type="button"
-              onClick={() => setProjectFilter("ALL")}
-              className={cn(
-                "px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer",
-                projectFilter === "ALL"
-                  ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                  : "text-(--text-muted) hover:text-(--text-primary) border border-transparent"
-              )}
-            >
-              All Tasks
-            </button>
-            <button
-              type="button"
-              onClick={() => setProjectFilter("LB")}
-              className={cn(
-                "px-3 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer",
-                projectFilter === "LB"
-                  ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                  : "text-(--text-muted) hover:text-(--text-primary) border border-transparent"
-              )}
-            >
-              <span className="text-[10px] font-bold px-1 py-0.5 rounded bg-purple-500/20 text-purple-300">LB</span>
-              Lorb
-            </button>
-          </div>
-
-          <button
-            onClick={() => setModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all shadow-sm hover:brightness-110 cursor-pointer"
-            style={{ backgroundColor: "var(--accent)" }}
-          >
-            <Plus size={15} />
-            New item
-          </button>
-        </div>
+        {/* Right + New item button */}
+        <button
+          onClick={() => setModalOpen(true)}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all shadow-sm hover:brightness-110 cursor-pointer"
+          style={{ backgroundColor: "var(--accent)" }}
+        >
+          <Plus size={15} />
+          New item
+        </button>
       </div>
 
       {/* ── Type tabs ── */}
