@@ -357,11 +357,7 @@ export default function TasksPage() {
             {/* Custom Popover Menu matching Pic 8 */}
             {isAssigneeOpen && (
               <div
-                className="absolute left-0 mt-1.5 w-56 rounded-2xl border shadow-2xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
-                style={{
-                  backgroundColor: "#0d131f",
-                  borderColor: "#1e293b",
-                }}
+                className="absolute left-0 mt-1.5 w-56 rounded-2xl border shadow-2xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150 bg-white dark:bg-[#0d131f] border-slate-200 dark:border-[#1e293b]"
               >
                 {/* Everyone */}
                 <button
@@ -370,11 +366,15 @@ export default function TasksPage() {
                     setAssigneeFilter("ALL");
                     setIsAssigneeOpen(false);
                   }}
-                  className="w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-[#1e293b]/70 cursor-pointer"
-                  style={{ color: assigneeFilter === "ALL" ? "#60a5fa" : "#f1f5f9" }}
+                  className={cn(
+                    "w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-slate-100 dark:hover:bg-[#1e293b]/70 cursor-pointer",
+                    assigneeFilter === "ALL"
+                      ? "text-blue-600 dark:text-blue-400 font-medium"
+                      : "text-slate-800 dark:text-[#f1f5f9]"
+                  )}
                 >
                   <span className="font-medium">Everyone</span>
-                  {assigneeFilter === "ALL" && <Check size={14} className="text-blue-400" />}
+                  {assigneeFilter === "ALL" && <Check size={14} className="text-blue-600 dark:text-blue-400" />}
                 </button>
 
                 {/* Assigned to me */}
@@ -384,11 +384,15 @@ export default function TasksPage() {
                     setAssigneeFilter("ME");
                     setIsAssigneeOpen(false);
                   }}
-                  className="w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-[#1e293b]/70 cursor-pointer"
-                  style={{ color: assigneeFilter === "ME" ? "#60a5fa" : "#f1f5f9" }}
+                  className={cn(
+                    "w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-slate-100 dark:hover:bg-[#1e293b]/70 cursor-pointer",
+                    assigneeFilter === "ME"
+                      ? "text-blue-600 dark:text-blue-400 font-medium"
+                      : "text-slate-800 dark:text-[#f1f5f9]"
+                  )}
                 >
                   <span>Assigned to me</span>
-                  {assigneeFilter === "ME" && <Check size={14} className="text-blue-400" />}
+                  {assigneeFilter === "ME" && <Check size={14} className="text-blue-600 dark:text-blue-400" />}
                 </button>
 
                 {/* Unassigned */}
@@ -398,14 +402,18 @@ export default function TasksPage() {
                     setAssigneeFilter("UNASSIGNED");
                     setIsAssigneeOpen(false);
                   }}
-                  className="w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-[#1e293b]/70 cursor-pointer"
-                  style={{ color: assigneeFilter === "UNASSIGNED" ? "#60a5fa" : "#f1f5f9" }}
+                  className={cn(
+                    "w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-slate-100 dark:hover:bg-[#1e293b]/70 cursor-pointer",
+                    assigneeFilter === "UNASSIGNED"
+                      ? "text-blue-600 dark:text-blue-400 font-medium"
+                      : "text-slate-800 dark:text-[#f1f5f9]"
+                  )}
                 >
                   <span>Unassigned</span>
-                  {assigneeFilter === "UNASSIGNED" && <Check size={14} className="text-blue-400" />}
+                  {assigneeFilter === "UNASSIGNED" && <Check size={14} className="text-blue-600 dark:text-blue-400" />}
                 </button>
 
-                <div className="my-1 border-t border-[#1e293b]" />
+                <div className="my-1 border-t border-slate-200 dark:border-[#1e293b]" />
 
                 {/* Team Members List (Pic 8 order) */}
                 <div className="max-h-64 overflow-y-auto space-y-0.5">
@@ -419,11 +427,15 @@ export default function TasksPage() {
                           setAssigneeFilter(u.name);
                           setIsAssigneeOpen(false);
                         }}
-                        className="w-full flex items-center justify-between px-3.5 py-1.5 text-xs text-left transition-colors hover:bg-[#1e293b]/70 cursor-pointer"
-                        style={{ color: isSelected ? "#60a5fa" : "#cbd5e1" }}
+                        className={cn(
+                          "w-full flex items-center justify-between px-3.5 py-1.5 text-xs text-left transition-colors hover:bg-slate-100 dark:hover:bg-[#1e293b]/70 cursor-pointer",
+                          isSelected
+                            ? "text-blue-600 dark:text-blue-400 font-medium"
+                            : "text-slate-700 dark:text-[#cbd5e1]"
+                        )}
                       >
                         <span className="truncate">{u.name}</span>
-                        {isSelected && <Check size={14} className="text-blue-400 shrink-0" />}
+                        {isSelected && <Check size={14} className="text-blue-600 dark:text-blue-400 shrink-0" />}
                       </button>
                     );
                   })}
@@ -456,11 +468,7 @@ export default function TasksPage() {
             {/* Custom Popover Menu matching Pic 2 */}
             {isTimeOpen && (
               <div
-                className="absolute left-0 mt-1.5 w-44 rounded-2xl border shadow-2xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
-                style={{
-                  backgroundColor: "#0d131f",
-                  borderColor: "#1e293b",
-                }}
+                className="absolute left-0 mt-1.5 w-44 rounded-2xl border shadow-2xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150 bg-white dark:bg-[#0d131f] border-slate-200 dark:border-[#1e293b]"
               >
                 {TIME_OPTS.map(opt => {
                   const isSelected = timeFilter === opt.key;
@@ -472,11 +480,15 @@ export default function TasksPage() {
                         setTimeFilter(opt.key);
                         setIsTimeOpen(false);
                       }}
-                      className="w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-[#1e293b]/70 cursor-pointer"
-                      style={{ color: isSelected ? "#60a5fa" : "#f1f5f9" }}
+                      className={cn(
+                        "w-full flex items-center justify-between px-3.5 py-2 text-xs text-left transition-colors hover:bg-slate-100 dark:hover:bg-[#1e293b]/70 cursor-pointer",
+                        isSelected
+                          ? "text-blue-600 dark:text-blue-400 font-medium"
+                          : "text-slate-800 dark:text-[#f1f5f9]"
+                      )}
                     >
                       <span className="font-medium">{opt.label}</span>
-                      {isSelected && <Check size={14} className="text-blue-400" />}
+                      {isSelected && <Check size={14} className="text-blue-600 dark:text-blue-400" />}
                     </button>
                   );
                 })}

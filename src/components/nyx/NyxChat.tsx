@@ -103,21 +103,21 @@ export function NyxChat() {
   return (
     <div className="flex flex-col h-full text-xs">
       {/* Header */}
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1e293b]">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200 dark:border-[#1e293b]">
         <div className="flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
+          <div className="w-5 h-5 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center">
             <Sparkles size={11} />
           </div>
           <div>
-            <span className="font-semibold text-slate-100">Nyx</span>
-            <span className="ml-1 text-[10px] text-emerald-400 font-mono">● online</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-100">Nyx</span>
+            <span className="ml-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">● online</span>
           </div>
         </div>
 
         <button
           onClick={clearChat}
           title="Reset conversation"
-          className="p-1 rounded text-slate-400 hover:text-slate-200 hover:bg-[#1e293b] transition-colors cursor-pointer"
+          className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors cursor-pointer"
         >
           <Trash2 size={12} />
         </button>
@@ -137,19 +137,19 @@ export function NyxChat() {
               className={cn(
                 "rounded-xl px-3 py-2 max-w-[92%] leading-relaxed break-words",
                 msg.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-none shadow-sm"
-                  : "bg-[#161f30] text-slate-200 border border-[#23324d] rounded-bl-none shadow-sm"
+                  ? "bg-blue-600 text-white rounded-br-none shadow-xs"
+                  : "bg-slate-100/90 text-slate-800 border border-slate-200/90 rounded-bl-none shadow-xs dark:bg-[#161f30] dark:text-slate-200 dark:border-[#23324d]"
               )}
             >
               <FormatMarkdown text={msg.content} />
             </div>
-            <span className="text-[9px] text-slate-500 px-1">{msg.time}</span>
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 px-1">{msg.time}</span>
           </div>
         ))}
 
         {isLoading && (
-          <div className="flex items-center gap-1.5 text-slate-400 px-2 py-1 bg-[#161f30]/60 rounded-lg w-max border border-[#23324d]">
-            <Sparkles size={11} className="animate-spin text-blue-400" />
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 px-2.5 py-1.5 bg-slate-100 dark:bg-[#161f30]/60 rounded-lg w-max border border-slate-200 dark:border-[#23324d]">
+            <Sparkles size={11} className="animate-spin text-blue-500 dark:text-blue-400" />
             <span className="text-[10px]">Nyx is thinking...</span>
           </div>
         )}
@@ -159,14 +159,14 @@ export function NyxChat() {
 
       {/* Quick Action Chips (shown when few messages) */}
       {messages.length <= 2 && (
-        <div className="pt-2 pb-2 space-y-1 border-t border-[#1e293b]">
-          <p className="text-[10px] text-slate-400 font-medium">Quick prompts:</p>
+        <div className="pt-2 pb-2 space-y-1 border-t border-slate-200 dark:border-[#1e293b]">
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Quick prompts:</p>
           <div className="flex flex-wrap gap-1">
             {QUICK_ACTIONS.map(action => (
               <button
                 key={action}
                 onClick={() => handleSend(action)}
-                className="text-[10px] px-2 py-1 rounded-lg bg-[#161f30] text-slate-300 border border-[#23324d] hover:border-blue-500/50 hover:text-blue-300 transition-colors text-left cursor-pointer"
+                className="text-[10px] px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 dark:bg-[#161f30] dark:text-slate-300 dark:border-[#23324d] dark:hover:border-blue-500/50 dark:hover:text-blue-300 transition-colors text-left cursor-pointer"
               >
                 {action}
               </button>
@@ -176,8 +176,8 @@ export function NyxChat() {
       )}
 
       {/* Input row */}
-      <div className="pt-2 border-t border-[#1e293b]">
-        <div className="flex items-center gap-1.5 bg-[#0f172a] border border-[#23324d] rounded-xl px-2.5 py-1.5 focus-within:border-blue-500/80 transition-colors">
+      <div className="pt-2 border-t border-slate-200 dark:border-[#1e293b]">
+        <div className="flex items-center gap-1.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-[#23324d] rounded-xl px-2.5 py-1.5 focus-within:border-blue-500 transition-colors shadow-xs">
           <input
             type="text"
             placeholder="Ask Nyx anything..."
@@ -185,7 +185,7 @@ export function NyxChat() {
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
-            className="flex-1 bg-transparent text-xs text-slate-100 placeholder:text-slate-500 outline-none"
+            className="flex-1 bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
           />
           <button
             onClick={() => handleSend()}
@@ -193,8 +193,8 @@ export function NyxChat() {
             className={cn(
               "p-1.5 rounded-lg transition-colors cursor-pointer",
               input.trim() && !isLoading
-                ? "bg-blue-600 text-white hover:bg-blue-500 shadow-sm"
-                : "text-slate-600 cursor-not-allowed"
+                ? "bg-blue-600 text-white hover:bg-blue-500 shadow-xs"
+                : "text-slate-400 dark:text-slate-600 cursor-not-allowed"
             )}
           >
             <Send size={11} />
@@ -245,10 +245,10 @@ function renderBold(str: string) {
   const parts = str.split(/(\*\*.*?\*\*|\*.*?\*)/g);
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
-      return <strong key={i} className="font-semibold text-white">{part.slice(2, -2)}</strong>;
+      return <strong key={i} className="font-semibold text-slate-900 dark:text-white">{part.slice(2, -2)}</strong>;
     }
     if (part.startsWith("*") && part.endsWith("*")) {
-      return <em key={i} className="text-slate-300 italic">{part.slice(1, -1)}</em>;
+      return <em key={i} className="text-slate-600 dark:text-slate-300 italic">{part.slice(1, -1)}</em>;
     }
     return part;
   });

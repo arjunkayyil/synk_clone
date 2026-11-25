@@ -131,7 +131,9 @@ function KanbanColumn({
       ref={setNodeRef}
       className={cn(
         "rounded-2xl border flex flex-col min-h-[550px] transition-colors p-3",
-        isOver ? "border-blue-500/80 bg-blue-950/20" : "border-(--border) bg-(--bg-card)"
+        isOver
+          ? "border-blue-500 bg-blue-50/50 dark:border-blue-500/80 dark:bg-blue-950/20"
+          : "border-slate-200 bg-slate-100/70 dark:border-(--border) dark:bg-(--bg-card)"
       )}
     >
       {/* Column Header */}
@@ -196,14 +198,14 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
       {...listeners}
       onClick={onSelect}
       className={cn(
-        "p-3.5 rounded-xl border transition-all cursor-grab active:cursor-grabbing hover:border-[#58a6ff]/60 space-y-2.5 shadow-sm",
-        "bg-[#161b22] border-[#30363d]"
+        "p-3.5 rounded-xl border transition-all cursor-grab active:cursor-grabbing hover:border-blue-400 dark:hover:border-[#58a6ff]/60 space-y-2.5 shadow-xs hover:shadow-md",
+        "bg-white dark:bg-[#161b22] border-slate-200/90 dark:border-[#30363d]"
       )}
     >
       {/* Top Meta: ID, Badges */}
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 font-mono text-xs text-[#8b949e]">
-          <span className="text-[#3fb950]">◎</span>
+        <div className="flex items-center gap-1.5 font-mono text-xs text-slate-500 dark:text-[#8b949e]">
+          <span className="text-emerald-500 dark:text-[#3fb950]">◎</span>
           <span>{displayId}</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -214,21 +216,21 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
 
       {/* Title */}
       <h3
-        className="text-[13px] font-semibold leading-snug line-clamp-2 text-[#f0f6fc]"
+        className="text-[13px] font-semibold leading-snug line-clamp-2 text-slate-800 dark:text-[#f0f6fc]"
       >
         {task.title}
       </h3>
 
       {/* Footer: Assignee & Status indicator */}
-      <div className="flex items-center justify-between pt-1.5 text-xs border-t border-[#30363d]/50">
-        <span className="text-[11px] text-[#8b949e] flex items-center gap-1 truncate max-w-[150px]">
+      <div className="flex items-center justify-between pt-1.5 text-xs border-t border-slate-100 dark:border-[#30363d]/50">
+        <span className="text-[11px] text-slate-600 dark:text-[#8b949e] flex items-center gap-1 truncate max-w-[150px]">
           {task.assignee ? (
             <>
               <span className="text-xs">👤</span>
               <span className="truncate">{task.assignee.name}</span>
             </>
           ) : (
-            <span className="text-gray-500">Unassigned</span>
+            <span className="text-slate-400 dark:text-gray-500">Unassigned</span>
           )}
         </span>
 
@@ -236,25 +238,25 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
           className={cn(
             "text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1",
             task.status === "FIXED"
-              ? "text-purple-400 border border-purple-500/30 bg-purple-950/20"
+              ? "text-purple-600 border border-purple-200 bg-purple-50 dark:text-purple-400 dark:border-purple-500/30 dark:bg-purple-950/20"
               : task.status === "CLOSED"
-              ? "text-emerald-400 border border-emerald-500/30 bg-emerald-950/20"
+              ? "text-emerald-600 border border-emerald-200 bg-emerald-50 dark:text-emerald-400 dark:border-emerald-500/30 dark:bg-emerald-950/20"
               : task.status === "IN_PROGRESS"
-              ? "text-amber-300 border border-amber-500/30 bg-amber-950/20"
-              : "text-slate-400 border border-slate-700 bg-slate-800/40"
+              ? "text-amber-700 border border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-500/30 dark:bg-amber-950/20"
+              : "text-slate-600 border border-slate-200 bg-slate-100 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-800/40"
           )}
         >
           {task.status === "IN_PROGRESS" ? (
             <>
-              <span className="text-amber-400 text-[10px]">⊙</span> In progress
+              <span className="text-amber-500 text-[10px]">⊙</span> In progress
             </>
           ) : task.status === "FIXED" ? (
             <>
-              <span className="text-purple-400 text-[10px]">✔</span> Fixed
+              <span className="text-purple-500 text-[10px]">✔</span> Fixed
             </>
           ) : task.status === "CLOSED" ? (
             <>
-              <span className="text-emerald-400 text-[10px]">✔</span> Closed
+              <span className="text-emerald-500 text-[10px]">✔</span> Closed
             </>
           ) : (
             <>

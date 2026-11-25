@@ -163,25 +163,21 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
 
         {/* Timer Capsule: • 02:28:27 || ■ */}
         <div
-          className="flex items-center gap-2 px-3 py-1 rounded-full text-xs border"
-          style={{
-            backgroundColor: "rgba(14, 22, 38, 0.8)",
-            borderColor: "rgba(59, 130, 246, 0.3)",
-          }}
+          className="flex items-center gap-2 px-3 py-1 rounded-full text-xs border bg-blue-50/80 border-blue-200/80 dark:bg-[rgba(14,22,38,0.8)] dark:border-[rgba(59,130,246,0.3)] shadow-xs"
         >
           <span
             className={cn(
               "w-2 h-2 rounded-full",
-              timerRunning ? "bg-emerald-400 animate-pulse" : "bg-amber-400"
+              timerRunning ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
             )}
           />
-          <span className="tabular-nums font-mono text-xs font-medium text-blue-300">
+          <span className="tabular-nums font-mono text-xs font-semibold text-blue-700 dark:text-blue-300">
             {formatTime(seconds)}
           </span>
           <button
             onClick={() => setTimerRunning(!timerRunning)}
             title={timerRunning ? "Pause timer" : "Resume timer"}
-            className="text-blue-400 hover:text-white transition-colors ml-1"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-white transition-colors ml-1 cursor-pointer"
           >
             {timerRunning ? <Pause size={12} /> : <Play size={12} />}
           </button>
@@ -191,7 +187,7 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
               setSeconds(0);
             }}
             title="Stop timer"
-            className="text-(--text-muted) hover:text-red-400 transition-colors"
+            className="text-slate-400 dark:text-(--text-muted) hover:text-red-500 transition-colors cursor-pointer"
           >
             <Square size={11} fill="currentColor" />
           </button>
