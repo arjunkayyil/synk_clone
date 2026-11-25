@@ -73,6 +73,7 @@ export default function TasksPage() {
   const { data: session } = useSession();
 
   // Tab & Filter states
+  const [projectFilter,  setProjectFilter]  = useState("LB"); // "ALL" | "LB"
   const [activeType,     setActiveType]     = useState("ALL");
   const [activeStatus,   setActiveStatus]   = useState("ALL");
   const [assigneeFilter, setAssigneeFilter] = useState("ALL"); // "ALL" | "ME" | "UNASSIGNED" | user.name | user.id
@@ -137,6 +138,11 @@ export default function TasksPage() {
   // Filtered tasks
   const tasks = useMemo(() => {
     return allTasks.filter(t => {
+      // Project
+      if (projectFilter !== "ALL" && t.project?.key !== projectFilter && t.projectId !== projectFilter) {
+        return false;
+      }
+
       // Type
       if (activeType !== "ALL" && t.type !== activeType) return false;
 
@@ -208,12 +214,26 @@ export default function TasksPage() {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-(--bg-card) border border-(--border)">
             <button
-              className="px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600/20 text-blue-400 border border-blue-500/30"
+              type="button"
+              onClick={() => setProjectFilter("ALL")}
+              className={cn(
+                "px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer",
+                projectFilter === "ALL"
+                  ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
+                  : "text-(--text-muted) hover:text-(--text-primary) border border-transparent"
+              )}
             >
               All Tasks
             </button>
             <button
-              className="px-3 py-1 rounded-lg text-xs font-medium text-(--text-muted) hover:text-(--text-primary) transition-colors flex items-center gap-1.5"
+              type="button"
+              onClick={() => setProjectFilter("LB")}
+              className={cn(
+                "px-3 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer",
+                projectFilter === "LB"
+                  ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
+                  : "text-(--text-muted) hover:text-(--text-primary) border border-transparent"
+              )}
             >
               <span className="text-[10px] font-bold px-1 py-0.5 rounded bg-purple-500/20 text-purple-300">LB</span>
               Lorb
@@ -324,11 +344,13 @@ export default function TasksPage() {
 
           {/* All Projects dropdown */}
           <select
+            value={projectFilter}
+            onChange={e => setProjectFilter(e.target.value)}
             className="px-3 py-1.5 rounded-xl text-xs font-medium border outline-none cursor-pointer"
             style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text-secondary)" }}
           >
-            <option>All Projects</option>
-            <option>Lorb</option>
+            <option value="ALL">All Projects</option>
+            <option value="LB">Lorb</option>
           </select>
 
           {/* Status filter */}

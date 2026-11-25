@@ -25,7 +25,7 @@ export function ProjectCard({
   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <Link href={`/projects/${id}`}>
+    <Link href="/tasks">
       <div
         className="rounded-xl border p-5 hover:border-blue-700/60 transition-colors cursor-pointer group"
         style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}
