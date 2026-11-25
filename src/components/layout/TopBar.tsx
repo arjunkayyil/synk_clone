@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useCreateModal } from "@/app/providers";
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { signOut, useSession } from "next-auth/react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import { cn } from "@/lib/utils";
 
@@ -40,9 +41,19 @@ interface TopBarProps {
   userName?: string;
 }
 
-export function TopBar({ userName = "arjunkayyil" }: TopBarProps) {
+export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProps) {
   const { isCreateOpen, openCreate, closeCreate } = useCreateModal();
   const { theme, toggleTheme } = useTheme();
+  const { data: session } = useSession();
+
+  const activeName = session?.user?.name || initialUserName;
+  const activeEmail = session?.user?.email || "arjunkayyil@gmail.com";
+  const initials = activeName
+    .split(" ")
+    .map(w => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "AR";
 
   // Timer state
   const [timerRunning, setTimerRunning] = useState(true);
@@ -238,10 +249,10 @@ export function TopBar({ userName = "arjunkayyil" }: TopBarProps) {
         <div className="relative" ref={userRef}>
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-1 p-1 rounded-lg hover:bg-(--bg-hover) transition-colors"
+            className="flex items-center gap-1 p-1 rounded-lg hover:bg-(--bg-hover) transition-colors cursor-pointer"
           >
             <div className="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-[11px] font-semibold text-white">
-              AR
+              {initials}
             </div>
             <ChevronDown size={12} className="text-(--text-muted)" />
           </button>
@@ -258,10 +269,10 @@ export function TopBar({ userName = "arjunkayyil" }: TopBarProps) {
               {/* Header profile info */}
               <div className="px-4 py-3 space-y-0.5">
                 <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>
-                  arjunkayyil
+                  {activeName}
                 </p>
                 <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>
-                  arjunkayyil@gmail.com
+                  {activeEmail}
                 </p>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-blue-400 pt-1">
                   MEMBER
@@ -318,7 +329,11 @@ export function TopBar({ userName = "arjunkayyil" }: TopBarProps) {
 
                 <button
                   type="button"
-                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium transition-colors hover:bg-(--bg-hover) text-left text-red-400"
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    signOut({ callbackUrl: "/login" });
+                  }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium transition-colors hover:bg-(--bg-hover) text-left text-red-400 cursor-pointer"
                 >
                   <LogOut size={14} />
                   <span>Sign out</span>

@@ -7,6 +7,7 @@
 
 import { useState, createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 // ── Modal context ─────────────────────────────────────────────────────────────
@@ -38,18 +39,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   return (
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <ModalContext.Provider
-          value={{
-            isCreateOpen,
-            openCreate: () => setIsCreateOpen(true),
-            closeCreate: () => setIsCreateOpen(false),
-          }}
-        >
-          {children}
-        </ModalContext.Provider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <SessionProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ModalContext.Provider
+            value={{
+              isCreateOpen,
+              openCreate: () => setIsCreateOpen(true),
+              closeCreate: () => setIsCreateOpen(false),
+            }}
+          >
+            {children}
+          </ModalContext.Provider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
 }

@@ -35,6 +35,12 @@ async function main() {
     create: { name: "Carol Singh", email: "carol@synk.dev", passwordHash: password },
   });
 
+  const arjun = await prisma.user.upsert({
+    where: { email: "arjunkayyil@gmail.com" },
+    update: {},
+    create: { name: "Arjun Kayyil", email: "arjunkayyil@gmail.com", passwordHash: password },
+  });
+
   // ── Project ───────────────────────────────────────────────────────────────
   const project = await prisma.project.upsert({
     where: { key: "LB" },
