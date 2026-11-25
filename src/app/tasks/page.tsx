@@ -8,16 +8,17 @@
  */
 
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search, List, Columns3, Filter, ChevronDown } from "lucide-react";
-import { fetchTasks } from "@/lib/api";
+import { fetchTasks, updateTask } from "@/lib/api";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { TimeAgo } from "@/components/ui/TimeAgo";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import { TaskDetailModal } from "@/components/tasks/TaskDetailModal";
+import { KanbanBoard } from "@/components/tasks/KanbanBoard";
 import { taskDisplayId, cn } from "@/lib/utils";
-import type { Task } from "@/lib/types";
+import type { Task, TaskStatus } from "@/lib/types";
 
 // ── Type tabs config ──────────────────────────────────────────────────────────
 const TYPE_TABS = [
@@ -39,6 +40,7 @@ const VIEW_ICONS = [
 type ViewKey = (typeof VIEW_ICONS)[number]["key"];
 
 export default function TasksPage() {
+  const qc = useQueryClient();
   const [activeType,   setActiveType]   = useState("ALL");
   const [activeStatus, setActiveStatus] = useState("ALL");
   const [search,       setSearch]       = useState("");
@@ -50,6 +52,14 @@ export default function TasksPage() {
   const { data: allTasks = [], isLoading } = useQuery<Task[]>({
     queryKey: ["tasks"],
     queryFn:  () => fetchTasks(),
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: TaskStatus }) =>
+      updateTask(id, { status }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["tasks"] });
+    },
   });
 
   // Per-type counts for the tab pills
@@ -68,6 +78,11 @@ export default function TasksPage() {
       return true;
     });
   }, [allTasks, activeType, activeStatus, search]);
+
+  // Tasks shown on the Board: show user-created tasks (> 30) or any newly added tasks
+  const boardTasks = useMemo(() => {
+    return tasks.filter(t => t.number > 30);
+  }, [tasks]);
 
   return (
     <div className="max-w-7xl mx-auto space-y-0">
@@ -255,50 +270,82 @@ export default function TasksPage() {
         </div>
       </div>
 
-      {/* ── Task list ── */}
-      <div
-        className="rounded-xl border overflow-hidden"
-        style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}
-      >
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20" style={{ color: "var(--text-muted)" }}>
-            Loading tasks…
-          </div>
-        ) : tasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3" style={{ color: "var(--text-muted)" }}>
-            <p className="text-sm">No tasks found</p>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white"
-              style={{ backgroundColor: "var(--accent)" }}
-            >
-              <Plus size={14} /> Create your first item
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Table header */}
+      {/* ── Main View (List or Board) ── */}
+      {view === "board" ? (
+        <div className="pt-2">
+          {boardTasks.length === 0 ? (
             <div
-              className="grid grid-cols-[1fr_auto_auto_auto_auto] items-center px-4 py-2 border-b text-[11px] font-semibold uppercase tracking-wider"
-              style={{ borderColor: "var(--border)", color: "var(--text-muted)", backgroundColor: "var(--bg-panel)" }}
+              className="rounded-2xl border p-12 text-center space-y-3"
+              style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}
             >
-              <span>Title</span>
-              <span className="w-24 text-center">Status</span>
-              <span className="w-28 text-center">Assignee</span>
-              <span className="w-20 text-right">Updated</span>
+              <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                No active tasks on your board
+              </p>
+              <p className="text-xs max-w-sm mx-auto" style={{ color: "var(--text-muted)" }}>
+                You haven&apos;t created any tasks yet. Create a new bug or task to start tracking your work here.
+              </p>
+              <button
+                onClick={() => setModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white transition-colors hover:bg-blue-600 cursor-pointer"
+                style={{ backgroundColor: "var(--accent)" }}
+              >
+                <Plus size={14} /> Add new item
+              </button>
             </div>
+          ) : (
+            <KanbanBoard
+              tasks={boardTasks}
+              onSelectTask={t => setSelectedTask(t)}
+              onUpdateStatus={(id, status) => updateStatusMutation.mutate({ id, status: status as TaskStatus })}
+            />
+          )}
+        </div>
+      ) : (
+        /* ── Task list ── */
+        <div
+          className="rounded-xl border overflow-hidden"
+          style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20" style={{ color: "var(--text-muted)" }}>
+              Loading tasks…
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-3" style={{ color: "var(--text-muted)" }}>
+              <p className="text-sm">No tasks found</p>
+              <button
+                onClick={() => setModalOpen(true)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white"
+                style={{ backgroundColor: "var(--accent)" }}
+              >
+                <Plus size={14} /> Create your first item
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Table header */}
+              <div
+                className="grid grid-cols-[1fr_auto_auto_auto_auto] items-center px-4 py-2 border-b text-[11px] font-semibold uppercase tracking-wider"
+                style={{ borderColor: "var(--border)", color: "var(--text-muted)", backgroundColor: "var(--bg-panel)" }}
+              >
+                <span>Title</span>
+                <span className="w-24 text-center">Status</span>
+                <span className="w-28 text-center">Assignee</span>
+                <span className="w-20 text-right">Updated</span>
+              </div>
 
-            {/* Rows */}
-            {tasks.map(task => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                onClick={() => setSelectedTask(task)}
-              />
-            ))}
-          </>
-        )}
-      </div>
+              {/* Rows */}
+              {tasks.map(task => (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onClick={() => setSelectedTask(task)}
+                />
+              ))}
+            </>
+          )}
+        </div>
+      )}
 
       {/* Create task modal */}
       <CreateTaskModal
