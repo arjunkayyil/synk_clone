@@ -202,9 +202,6 @@ export default function TasksPage() {
           <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
             All Workspace Tasks & Activity
           </h1>
-          <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
-            Manage tasks across all projects with interactive views, filters, and drag-and-drop.
-          </p>
         </div>
 
         {/* Right workspace pills & + New item button */}
