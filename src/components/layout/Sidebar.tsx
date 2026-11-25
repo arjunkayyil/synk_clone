@@ -48,7 +48,7 @@ export function Sidebar() {
               "w-9 h-9 flex items-center justify-center rounded-lg transition-colors",
               active
                 ? "bg-blue-600 text-white"
-                : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-hover)"
             )}
           >
             <Icon size={18} />
@@ -61,7 +61,7 @@ export function Sidebar() {
       <Link
         href="/settings"
         title="Settings"
-        className="w-9 h-9 flex items-center justify-center rounded-lg transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+        className="w-9 h-9 flex items-center justify-center rounded-lg transition-colors text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-hover)"
       >
         <Settings size={18} />
       </Link>

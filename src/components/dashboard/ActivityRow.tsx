@@ -2,6 +2,8 @@
  * src/components/dashboard/ActivityRow.tsx
  * A single row in the "All Workspace Tasks & Activity" list.
  */
+"use client";
+
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { timeAgo, taskDisplayId } from "@/lib/utils";
@@ -20,7 +22,7 @@ export function ActivityRow({ task }: ActivityRowProps) {
 
   return (
     <div
-      className="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-colors cursor-pointer border-b"
+      className="flex items-center gap-3 px-4 py-2.5 hover:bg-(--bg-hover) transition-colors cursor-pointer border-b"
       style={{ borderColor: "var(--border)" }}
     >
       {/* ID */}

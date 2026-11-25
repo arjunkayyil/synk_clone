@@ -39,7 +39,7 @@ export function RightPanel() {
               "flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors",
               activeTab === label
                 ? "text-blue-400 border-b-2 border-blue-500"
-                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                : "text-(--text-muted) hover:text-(--text-secondary)"
             )}
           >
             <Icon size={14} />
