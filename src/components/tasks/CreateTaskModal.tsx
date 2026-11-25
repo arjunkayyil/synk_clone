@@ -6,8 +6,8 @@
  * Left pane: form fields. Right pane: properties (status, priority, assignee).
  */
 
-import { useState, useEffect } from "react";
-import { X, Bug, ClipboardList } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { X, Bug, ClipboardList, UploadCloud, Paperclip } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProjects, fetchUsers, createTask } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -26,6 +26,8 @@ const STATUSES   = ["NEW", "IN_PROGRESS", "FIXED", "CLOSED"];
 const PRIORITIES = ["P1", "P2", "P3"];
 const SEVERITIES = ["Critical", "High", "Medium", "Low"];
 const ENVS       = ["Production", "Staging", "Development", "Local"];
+const OS_OPTIONS = ["macOS", "Windows", "Linux", "iOS", "Android"];
+const FREQUENCIES = ["Always", "Frequently", "Occasionally", "Rarely", "Once"];
 
 const statusLabel: Record<string, string> = {
   NEW: "New", IN_PROGRESS: "In Progress", FIXED: "Fixed", CLOSED: "Closed",
@@ -59,6 +61,10 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
   const [environment, setEnvironment] = useState("");
   const [version,     setVersion]     = useState("");
   const [browser,     setBrowser]     = useState("");
+  const [os,          setOs]          = useState("");
+  const [frequency,   setFrequency]   = useState("");
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Properties
   const [status,     setStatus]     = useState("NEW");
@@ -75,7 +81,7 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
   function reset() {
     setTitle(""); setDescription(""); setSeverity(""); setSteps("");
     setExpected(""); setActual(""); setModule(""); setEnvironment("");
-    setVersion(""); setBrowser(""); setStatus("NEW"); setPriority("P2");
+    setVersion(""); setBrowser(""); setOs(""); setFrequency(""); setAttachments([]); setStatus("NEW"); setPriority("P2");
     setAssigneeId("");
   }
 
@@ -292,6 +298,70 @@ export function CreateTaskModal({ open, onClose, defaultProjectId }: Props) {
                       style={{ backgroundColor: "var(--bg-hover)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
                     />
                   </Field>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Operating system">
+                    <Select value={os} onChange={e => setOs(e.target.value)}>
+                      <option value="">Select operating system…</option>
+                      {OS_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+                    </Select>
+                  </Field>
+                  <Field label="Frequency">
+                    <Select value={frequency} onChange={e => setFrequency(e.target.value)}>
+                      <option value="">Select frequency…</option>
+                      {FREQUENCIES.map(f => <option key={f} value={f}>{f}</option>)}
+                    </Select>
+                  </Field>
+                </div>
+
+                <div className="space-y-1.5 pt-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-(--text-muted)">
+                    Attachments
+                  </label>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    multiple
+                    className="hidden"
+                    onChange={e => {
+                      if (e.target.files) {
+                        setAttachments(prev => [...prev, ...Array.from(e.target.files || [])]);
+                      }
+                    }}
+                  />
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full rounded-xl border border-dashed py-6 px-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors hover:border-blue-500/50 hover:bg-(--bg-hover)"
+                    style={{ borderColor: "var(--border)", backgroundColor: "rgba(14, 22, 38, 0.4)" }}
+                  >
+                    <div className="flex items-center gap-2 text-sm text-(--text-secondary)">
+                      <UploadCloud size={18} className="text-blue-400" />
+                      <span>Drop images, video, or files — or <span className="text-blue-400 hover:underline">click to upload</span></span>
+                    </div>
+                  </div>
+
+                  {attachments.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {attachments.map((file, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border"
+                          style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)", color: "var(--text-secondary)" }}
+                        >
+                          <Paperclip size={12} className="text-(--text-muted)" />
+                          <span className="max-w-[150px] truncate">{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
+                            className="ml-1 text-(--text-muted) hover:text-red-400"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}
