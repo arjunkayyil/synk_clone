@@ -6,7 +6,8 @@
 
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
-import { timeAgo, taskDisplayId } from "@/lib/utils";
+import { TimeAgo } from "@/components/ui/TimeAgo";
+import { taskDisplayId } from "@/lib/utils";
 import type { Task } from "@/lib/types";
 
 interface ActivityRowProps {
@@ -68,7 +69,7 @@ export function ActivityRow({ task }: ActivityRowProps) {
 
       {/* Time ago */}
       <span className="text-xs shrink-0 w-20 text-right" style={{ color: "var(--text-muted)" }}>
-        {timeAgo(task.createdAt)}
+        <TimeAgo date={task.createdAt} />
       </span>
     </div>
   );

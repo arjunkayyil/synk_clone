@@ -13,9 +13,10 @@ import { Plus, Search, List, Columns3, Filter, ChevronDown } from "lucide-react"
 import { fetchTasks } from "@/lib/api";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
+import { TimeAgo } from "@/components/ui/TimeAgo";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import { TaskDetailModal } from "@/components/tasks/TaskDetailModal";
-import { taskDisplayId, timeAgo, cn } from "@/lib/utils";
+import { taskDisplayId, cn } from "@/lib/utils";
 import type { Task } from "@/lib/types";
 
 // ── Type tabs config ──────────────────────────────────────────────────────────
@@ -369,7 +370,7 @@ function TaskRow({ task, onClick }: { task: Task; onClick: () => void }) {
 
       {/* Time ago */}
       <span className="text-xs shrink-0 w-24 text-right" style={{ color: "var(--text-muted)" }}>
-        {timeAgo(task.updatedAt)}
+        <TimeAgo date={task.updatedAt} />
       </span>
     </div>
   );

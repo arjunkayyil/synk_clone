@@ -19,7 +19,8 @@ import {
   Check,
 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { taskDisplayId, timeAgo, cn } from "@/lib/utils";
+import { taskDisplayId, cn } from "@/lib/utils";
+import { TimeAgo } from "@/components/ui/TimeAgo";
 import type { Task } from "@/lib/types";
 
 interface Props {
@@ -364,7 +365,7 @@ export function TaskDetailModal({ task, open, onClose }: Props) {
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                 <span className="font-semibold text-(--text-secondary)">safnasherin979</span> created the item
                 <span>·</span>
-                <span>{timeAgo(task.createdAt)}</span>
+                <TimeAgo date={task.createdAt} />
               </div>
             </div>
           </div>
@@ -508,7 +509,7 @@ export function TaskDetailModal({ task, open, onClose }: Props) {
                 className="w-full px-3 py-2 rounded-xl text-xs border text-(--text-secondary)"
                 style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}
               >
-                {timeAgo(task.createdAt)}
+                <TimeAgo date={task.createdAt} />
               </div>
             </PropItem>
           </div>
