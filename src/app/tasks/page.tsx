@@ -79,10 +79,8 @@ export default function TasksPage() {
     });
   }, [allTasks, activeType, activeStatus, search]);
 
-  // Tasks shown on the Board: show user-created tasks (> 30) or any newly added tasks
-  const boardTasks = useMemo(() => {
-    return tasks.filter(t => t.number > 30);
-  }, [tasks]);
+  // Tasks shown on the Board
+  const boardTasks = tasks;
 
   return (
     <div className="max-w-7xl mx-auto space-y-0">
