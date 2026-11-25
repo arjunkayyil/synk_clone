@@ -235,16 +235,6 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
           )}
         </div>
 
-        {/* Add work button */}
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer hover:bg-blue-600"
-          style={{ backgroundColor: "var(--accent)" }}
-        >
-          <Plus size={14} />
-          Add work
-        </button>
-
         {/* User profile avatar dropdown */}
         <div className="relative" ref={userRef}>
           <button
