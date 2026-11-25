@@ -15,12 +15,16 @@ interface ModalCtx {
   isCreateOpen: boolean;
   openCreate: () => void;
   closeCreate: () => void;
+  isRightPanelOpen: boolean;
+  toggleRightPanel: () => void;
 }
 
 const ModalContext = createContext<ModalCtx>({
   isCreateOpen: false,
   openCreate: () => {},
   closeCreate: () => {},
+  isRightPanelOpen: true,
+  toggleRightPanel: () => {},
 });
 
 export function useCreateModal() {
@@ -37,6 +41,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   return (
     <SessionProvider>
@@ -47,6 +52,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
               isCreateOpen,
               openCreate: () => setIsCreateOpen(true),
               closeCreate: () => setIsCreateOpen(false),
+              isRightPanelOpen,
+              toggleRightPanel: () => setIsRightPanelOpen(prev => !prev),
             }}
           >
             {children}

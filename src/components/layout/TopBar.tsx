@@ -42,7 +42,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProps) {
-  const { isCreateOpen, openCreate, closeCreate } = useCreateModal();
+  const { isCreateOpen, openCreate, closeCreate, isRightPanelOpen, toggleRightPanel } = useCreateModal();
   const { theme, toggleTheme } = useTheme();
   const { data: session } = useSession();
 
@@ -345,8 +345,14 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
 
         {/* Right panel toggle icon */}
         <button
-          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-hover) transition-colors"
-          title="Toggle side panel"
+          onClick={toggleRightPanel}
+          className={cn(
+            "p-1.5 rounded-lg transition-colors cursor-pointer border",
+            isRightPanelOpen
+              ? "text-blue-400 border-blue-500/40 bg-blue-500/10"
+              : "text-(--text-muted) border-transparent hover:text-(--text-primary) hover:bg-(--bg-hover)"
+          )}
+          title={isRightPanelOpen ? "Close side panel" : "Open side panel"}
         >
           <PanelRight size={16} />
         </button>

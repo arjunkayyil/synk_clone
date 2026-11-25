@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Hand, Globe, Sparkles } from "lucide-react";
+import { useCreateModal } from "@/app/providers";
 
 const tabs = [
   { label: "Work",  icon: Hand },
@@ -17,6 +18,9 @@ const tabs = [
 
 export function RightPanel() {
   const [activeTab, setActiveTab] = useState("Work");
+  const { isRightPanelOpen } = useCreateModal();
+
+  if (!isRightPanelOpen) return null;
 
   return (
     <aside
