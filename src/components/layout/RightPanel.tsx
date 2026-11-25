@@ -9,6 +9,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Hand, Globe, Sparkles } from "lucide-react";
 import { useCreateModal } from "@/app/providers";
+import { NyxChat } from "@/components/nyx/NyxChat";
 
 const tabs = [
   { label: "Work",  icon: Hand },
@@ -24,7 +25,10 @@ export function RightPanel() {
 
   return (
     <aside
-      className="w-64 flex flex-col shrink-0 border-l"
+      className={cn(
+        "flex flex-col shrink-0 border-l transition-all duration-200",
+        activeTab === "Nyx" ? "w-80" : "w-64"
+      )}
       style={{
         backgroundColor: "var(--bg-panel)",
         borderColor: "var(--border)",
@@ -40,7 +44,7 @@ export function RightPanel() {
             key={label}
             onClick={() => setActiveTab(label)}
             className={cn(
-              "flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors",
+              "flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium transition-colors cursor-pointer",
               activeTab === label
                 ? "text-blue-400 border-b-2 border-blue-500"
                 : "text-(--text-muted) hover:text-(--text-secondary)"
@@ -53,14 +57,18 @@ export function RightPanel() {
       </div>
 
       {/* Panel body */}
-      <div className="flex-1 overflow-y-auto p-3">
-        {activeTab === "Work" && <WorkPanel />}
+      <div className="flex-1 overflow-hidden p-3 flex flex-col min-h-0">
+        {activeTab === "Work" && (
+          <div className="flex-1 overflow-y-auto">
+            <WorkPanel />
+          </div>
+        )}
         {activeTab === "Space" && (
-          <EmptyState message="Your workspace notes and links will appear here." />
+          <div className="flex-1 overflow-y-auto">
+            <EmptyState message="Your workspace notes and links will appear here." />
+          </div>
         )}
-        {activeTab === "Nyx" && (
-          <EmptyState message="AI assistant — Nyx will help you here soon." />
-        )}
+        {activeTab === "Nyx" && <NyxChat />}
       </div>
     </aside>
   );
