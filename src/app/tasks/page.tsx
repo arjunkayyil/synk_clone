@@ -9,11 +9,12 @@
 
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, List, Columns3, Table2, Calendar, Filter, ChevronDown } from "lucide-react";
+import { Plus, Search, List, Columns3, Filter, ChevronDown } from "lucide-react";
 import { fetchTasks } from "@/lib/api";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
+import { TaskDetailModal } from "@/components/tasks/TaskDetailModal";
 import { taskDisplayId, timeAgo, cn } from "@/lib/utils";
 import type { Task } from "@/lib/types";
 
@@ -31,10 +32,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const VIEW_ICONS = [
-  { key: "list",     icon: List,     label: "List" },
-  { key: "board",    icon: Columns3, label: "Board" },
-  { key: "table",    icon: Table2,   label: "Table" },
-  { key: "calendar", icon: Calendar, label: "Calendar" },
+  { key: "list",  icon: List,     label: "List" },
+  { key: "board", icon: Columns3, label: "Board" },
 ] as const;
 type ViewKey = (typeof VIEW_ICONS)[number]["key"];
 
@@ -44,6 +43,7 @@ export default function TasksPage() {
   const [search,       setSearch]       = useState("");
   const [view,         setView]         = useState<ViewKey>("list");
   const [modalOpen,    setModalOpen]    = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   // Fetch ALL tasks (we filter client-side so counts are always accurate)
   const { data: allTasks = [], isLoading } = useQuery<Task[]>({
@@ -289,7 +289,11 @@ export default function TasksPage() {
 
             {/* Rows */}
             {tasks.map(task => (
-              <TaskRow key={task.id} task={task} />
+              <TaskRow
+                key={task.id}
+                task={task}
+                onClick={() => setSelectedTask(task)}
+              />
             ))}
           </>
         )}
@@ -300,16 +304,24 @@ export default function TasksPage() {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       />
+
+      {/* Detail modal when a task / bug is clicked */}
+      <TaskDetailModal
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
     </div>
   );
 }
 
 // ── Task row component ────────────────────────────────────────────────────────
-function TaskRow({ task }: { task: Task }) {
+function TaskRow({ task, onClick }: { task: Task; onClick: () => void }) {
   const displayId = taskDisplayId(task.project?.key ?? "??", task.type, task.number);
 
   return (
     <div
+      onClick={onClick}
       className="flex items-center gap-3 px-4 py-3 border-b hover:bg-(--bg-hover) transition-colors cursor-pointer"
       style={{ borderColor: "var(--border)" }}
     >
