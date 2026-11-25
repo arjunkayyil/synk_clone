@@ -23,8 +23,6 @@ import {
   Search,
   List as ListIcon,
   Columns3,
-  Table as TableIcon,
-  Calendar as CalendarIcon,
   Filter,
   ChevronDown,
   Check,
@@ -65,10 +63,8 @@ const TIME_OPTS = [
 ];
 
 const VIEW_ICONS = [
-  { key: "list",     icon: ListIcon,     label: "List" },
-  { key: "board",    icon: Columns3,     label: "Board" },
-  { key: "table",    icon: TableIcon,    label: "Table" },
-  { key: "calendar", icon: CalendarIcon, label: "Calendar" },
+  { key: "list",  icon: ListIcon, label: "List" },
+  { key: "board", icon: Columns3, label: "Board" },
 ] as const;
 type ViewKey = (typeof VIEW_ICONS)[number]["key"];
 
