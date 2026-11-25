@@ -142,35 +142,6 @@ export default function TasksPage() {
             </button>
           ))}
         </div>
-
-        {/* Section tabs */}
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-            Sections
-          </p>
-          <div className="flex gap-2">
-            {["All Sections", "Bugs", "Tasks"].map(s => (
-              <button
-                key={s}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1 rounded-full text-sm border transition-colors",
-                  s === "All Sections"
-                    ? "bg-blue-600/20 text-blue-300 border-blue-600/50"
-                    : "border-(--border) text-(--text-muted) hover:text-(--text-primary)"
-                )}
-              >
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: s === "Bugs" ? "#ef4444" : s === "Tasks" ? "#64748b" : "#3b82f6" }}
-                />
-                {s}
-                {s !== "All Sections" && (
-                  <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>0</span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* ── Search + Views + Filters ── */}
@@ -194,16 +165,6 @@ export default function TasksPage() {
           </div>
 
           <div className="flex-1" />
-
-          {/* Views label */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors" style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-            Views
-          </button>
-
-          {/* Grouping */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors" style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-            No grouping <ChevronDown size={13} />
-          </button>
 
           {/* View switcher */}
           <div className="flex items-center rounded-lg overflow-hidden border" style={{ borderColor: "var(--border)" }}>
