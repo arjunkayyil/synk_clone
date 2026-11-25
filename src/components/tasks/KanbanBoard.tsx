@@ -129,11 +129,13 @@ function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
+      style={{
+        backgroundColor: "var(--bg-card-column)",
+        borderColor: "var(--border)",
+      }}
       className={cn(
         "rounded-2xl border flex flex-col min-h-[550px] transition-colors p-3",
-        isOver
-          ? "border-blue-500 bg-blue-50/50 dark:border-blue-500/80 dark:bg-blue-950/20"
-          : "border-slate-200 bg-slate-100/70 dark:border-(--border) dark:bg-(--bg-card)"
+        isOver && "ring-2 ring-blue-500/50"
       )}
     >
       {/* Column Header */}
@@ -193,19 +195,25 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        backgroundColor: "var(--bg-card)",
+        borderColor: "var(--border)",
+      }}
       {...attributes}
       {...listeners}
       onClick={onSelect}
       className={cn(
-        "p-3.5 rounded-xl border transition-all cursor-grab active:cursor-grabbing hover:border-blue-400 dark:hover:border-[#58a6ff]/60 space-y-2.5 shadow-xs hover:shadow-md",
-        "bg-white dark:bg-[#161b22] border-slate-200/90 dark:border-[#30363d]"
+        "p-3.5 rounded-xl border transition-all cursor-grab active:cursor-grabbing hover:border-blue-500 space-y-2.5 shadow-sm hover:shadow-md"
       )}
     >
       {/* Top Meta: ID, Badges */}
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 font-mono text-xs text-slate-500 dark:text-[#8b949e]">
-          <span className="text-emerald-500 dark:text-[#3fb950]">◎</span>
+        <div
+          className="flex items-center gap-1.5 font-mono text-xs"
+          style={{ color: "var(--text-muted)" }}
+        >
+          <span className="text-emerald-500">◎</span>
           <span>{displayId}</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -216,21 +224,28 @@ function SortableTaskCard({ task, onSelect }: { task: Task; onSelect: () => void
 
       {/* Title */}
       <h3
-        className="text-[13px] font-semibold leading-snug line-clamp-2 text-slate-800 dark:text-[#f0f6fc]"
+        className="text-[13px] font-semibold leading-snug line-clamp-2"
+        style={{ color: "var(--text-primary)" }}
       >
         {task.title}
       </h3>
 
       {/* Footer: Assignee & Status indicator */}
-      <div className="flex items-center justify-between pt-1.5 text-xs border-t border-slate-100 dark:border-[#30363d]/50">
-        <span className="text-[11px] text-slate-600 dark:text-[#8b949e] flex items-center gap-1 truncate max-w-[150px]">
+      <div
+        className="flex items-center justify-between pt-1.5 text-xs border-t"
+        style={{ borderColor: "var(--border-subtle)" }}
+      >
+        <span
+          className="text-[11px] flex items-center gap-1 truncate max-w-[150px]"
+          style={{ color: "var(--text-secondary)" }}
+        >
           {task.assignee ? (
             <>
               <span className="text-xs">👤</span>
               <span className="truncate">{task.assignee.name}</span>
             </>
           ) : (
-            <span className="text-slate-400 dark:text-gray-500">Unassigned</span>
+            <span style={{ color: "var(--text-muted)" }}>Unassigned</span>
           )}
         </span>
 

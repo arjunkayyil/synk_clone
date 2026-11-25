@@ -244,7 +244,7 @@ export default function TasksPage() {
               className={cn(
                 "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors border",
                 activeType === tab.key
-                  ? "bg-blue-600/20 text-blue-300 border-blue-600/50"
+                  ? "bg-blue-600/15 text-blue-600 dark:bg-blue-600/20 dark:text-blue-300 border-blue-500/40"
                   : "border-transparent text-(--text-muted) hover:text-(--text-primary) hover:border-(--border)"
               )}
             >
