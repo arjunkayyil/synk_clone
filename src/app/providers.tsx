@@ -7,6 +7,7 @@
 
 import { useState, createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 // ── Modal context ─────────────────────────────────────────────────────────────
 interface ModalCtx {
@@ -37,16 +38,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ModalContext.Provider
-        value={{
-          isCreateOpen,
-          openCreate: () => setIsCreateOpen(true),
-          closeCreate: () => setIsCreateOpen(false),
-        }}
-      >
-        {children}
-      </ModalContext.Provider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ModalContext.Provider
+          value={{
+            isCreateOpen,
+            openCreate: () => setIsCreateOpen(true),
+            closeCreate: () => setIsCreateOpen(false),
+          }}
+        >
+          {children}
+        </ModalContext.Provider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

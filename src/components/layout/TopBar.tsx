@@ -26,11 +26,13 @@ import {
   Building2,
   Settings,
   Sun,
+  Moon,
   LogOut,
   Check,
   PanelRight,
 } from "lucide-react";
 import { useCreateModal } from "@/app/providers";
+import { useTheme } from "@/components/theme/ThemeProvider";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +42,7 @@ interface TopBarProps {
 
 export function TopBar({ userName = "arjunkayyil" }: TopBarProps) {
   const { isCreateOpen, openCreate, closeCreate } = useCreateModal();
+  const { theme, toggleTheme } = useTheme();
 
   // Timer state
   const [timerRunning, setTimerRunning] = useState(true);
@@ -293,11 +296,24 @@ export function TopBar({ userName = "arjunkayyil" }: TopBarProps) {
 
                 <button
                   type="button"
-                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium transition-colors hover:bg-(--bg-hover) text-left"
+                  onClick={() => {
+                    toggleTheme();
+                    setShowUserMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium transition-colors hover:bg-(--bg-hover) text-left cursor-pointer"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  <Sun size={14} className="text-(--text-muted)" />
-                  <span>Light mode</span>
+                  {theme === "dark" ? (
+                    <>
+                      <Sun size={14} className="text-(--text-muted)" />
+                      <span>Light mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon size={14} className="text-(--text-muted)" />
+                      <span>Dark mode</span>
+                    </>
+                  )}
                 </button>
 
                 <button

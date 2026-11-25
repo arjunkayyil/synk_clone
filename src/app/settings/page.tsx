@@ -8,13 +8,15 @@
  */
 
 import { useState } from "react";
-import { User, Palette, ShieldCheck, Bell, Network, Check } from "lucide-react";
+import { User, Palette, ShieldCheck, Bell, Network, Check, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 type TabKey = "profile" | "appearance" | "security" | "notifications" | "integrations";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
+  const { theme, setTheme } = useTheme();
 
   // Profile form state
   const [displayName, setDisplayName] = useState("arjunkayyil");
@@ -277,9 +279,41 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "appearance" && (
-            <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
-              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Appearance</h3>
-              <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Dark mode is enabled by default.</p>
+            <div className="rounded-xl border p-6 space-y-4" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+              <div>
+                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Theme</h3>
+                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Select your preferred interface color theme.</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 max-w-sm pt-2">
+                <button
+                  type="button"
+                  onClick={() => setTheme("dark")}
+                  className={cn(
+                    "flex flex-col items-center gap-2.5 p-4 rounded-xl border transition-all cursor-pointer",
+                    theme === "dark"
+                      ? "border-blue-500 bg-blue-600/10"
+                      : "border-(--border) hover:bg-(--bg-hover)"
+                  )}
+                >
+                  <Moon size={22} className={theme === "dark" ? "text-blue-400" : "text-(--text-muted)"} />
+                  <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>Dark mode</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme("light")}
+                  className={cn(
+                    "flex flex-col items-center gap-2.5 p-4 rounded-xl border transition-all cursor-pointer",
+                    theme === "light"
+                      ? "border-blue-500 bg-blue-600/10"
+                      : "border-(--border) hover:bg-(--bg-hover)"
+                  )}
+                >
+                  <Sun size={22} className={theme === "light" ? "text-blue-500" : "text-(--text-muted)"} />
+                  <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>Light mode</span>
+                </button>
+              </div>
             </div>
           )}
 
