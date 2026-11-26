@@ -100,7 +100,9 @@ export default function LoginPage() {
                   Password
                 </label>
                 <span className="text-[11px] text-blue-400 hover:underline cursor-pointer">
-                  Forgot?
+                  <Link href="/forgot-password" className="text-[11px] text-blue-400 hover:underline">
+                    Forgot?
+                  </Link>
                 </span>
               </div>
               <input

@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-// GET /api/tasks  — list tasks with optional filters
+// GET /api/tasks  — list tasks with optional filters (requires auth)
 export async function GET(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(req.url);
   const projectId  = searchParams.get("projectId")  || undefined;
   const status     = searchParams.get("status")     || undefined;
@@ -28,8 +34,13 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(tasks);
 }
 
-// POST /api/tasks  — create a new task
+// POST /api/tasks  — create a new task (requires auth)
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json() as {
     projectId:   string;
     type:        string;

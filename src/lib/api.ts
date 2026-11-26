@@ -1,9 +1,22 @@
 /**
  * src/lib/api.ts
  * Thin fetch wrappers used by TanStack Query hooks.
+ * All routes require an authenticated session (cookie is sent automatically).
+ * A 401 response redirects the user to /login.
  */
 
 import type { Task, Project, User } from "./types";
+
+/** Shared fetch helper — throws on non-OK, redirects to /login on 401 */
+async function apiFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+  const res = await fetch(input, init);
+  if (res.status === 401 && typeof window !== "undefined") {
+    window.location.href = "/login";
+    // Return a never-resolving promise so callers don't continue
+    return new Promise(() => {});
+  }
+  return res;
+}
 
 // ── Tasks ─────────────────────────────────────────────────────────────────────
 export async function fetchTasks(params?: {
@@ -17,7 +30,7 @@ export async function fetchTasks(params?: {
   if (params?.status)    url.searchParams.set("status",    params.status);
   if (params?.type)      url.searchParams.set("type",      params.type);
   if (params?.q)         url.searchParams.set("q",         params.q);
-  const res = await fetch(url.toString());
+  const res = await apiFetch(url.toString());
   if (!res.ok) throw new Error("Failed to fetch tasks");
   return res.json() as Promise<Task[]>;
 }
@@ -31,7 +44,7 @@ export async function createTask(data: {
   status?:      string;
   assigneeId?:  string | null;
 }): Promise<Task> {
-  const res = await fetch("/api/tasks", {
+  const res = await apiFetch("/api/tasks", {
     method:  "POST",
     headers: { "Content-Type": "application/json" },
     body:    JSON.stringify(data),
@@ -41,7 +54,7 @@ export async function createTask(data: {
 }
 
 export async function updateTask(id: string, data: Partial<Task>): Promise<Task> {
-  const res = await fetch(`/api/tasks/${id}`, {
+  const res = await apiFetch(`/api/tasks/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -52,14 +65,14 @@ export async function updateTask(id: string, data: Partial<Task>): Promise<Task>
 
 // ── Projects ──────────────────────────────────────────────────────────────────
 export async function fetchProjects(): Promise<Project[]> {
-  const res = await fetch("/api/projects");
+  const res = await apiFetch("/api/projects");
   if (!res.ok) throw new Error("Failed to fetch projects");
   return res.json() as Promise<Project[]>;
 }
 
 // ── Users ─────────────────────────────────────────────────────────────────────
 export async function fetchUsers(): Promise<User[]> {
-  const res = await fetch("/api/users");
+  const res = await apiFetch("/api/users");
   if (!res.ok) throw new Error("Failed to fetch users");
   return res.json() as Promise<User[]>;
 }
