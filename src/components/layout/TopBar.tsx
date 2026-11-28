@@ -36,6 +36,8 @@ import { useTheme } from "@/components/theme/ThemeProvider";
 import { signOut, useSession } from "next-auth/react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import { cn } from "@/lib/utils";
+import { useFocusTimer } from "@/context/FocusTimerContext";
+import { StopTimerModal } from "@/components/timer/StopTimerModal";
 
 interface TopBarProps {
   userName?: string;
@@ -45,6 +47,12 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
   const { isCreateOpen, openCreate, closeCreate, isRightPanelOpen, toggleRightPanel } = useCreateModal();
   const { theme, toggleTheme } = useTheme();
   const { data: session } = useSession();
+  const { timerState, seconds, pause, resume, formatTime, formatShort } = useFocusTimer();
+  const [showStop, setShowStop] = useState(false);
+
+  const isRunning = timerState === "running";
+  const isPaused  = timerState === "paused";
+  const isActive  = timerState !== "idle";
 
   const activeName = session?.user?.name || initialUserName;
   const activeEmail = session?.user?.email || "arjunkayyil@gmail.com";
@@ -54,25 +62,6 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
     .join("")
     .toUpperCase()
     .slice(0, 2) || "AR";
-
-  // Timer state
-  const [timerRunning, setTimerRunning] = useState(true);
-  const [seconds, setSeconds] = useState(2 * 3600 + 28 * 60 + 27); // 02:28:27
-
-  useEffect(() => {
-    if (!timerRunning) return;
-    const interval = setInterval(() => {
-      setSeconds(s => s + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [timerRunning]);
-
-  function formatTime(totalSec: number) {
-    const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
-    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
-    const s = String(totalSec % 60).padStart(2, "0");
-    return `${h}:${m}:${s}`;
-  }
 
   // Dropdown states
   const [showNotifications, setShowNotifications] = useState(false);
@@ -161,37 +150,42 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
 
         <div className="flex-1" />
 
-        {/* Timer Capsule: • 02:28:27 || ■ */}
-        <div
-          className="flex items-center gap-2 px-3 py-1 rounded-full text-xs border bg-blue-50/80 border-blue-200/80 dark:bg-[rgba(14,22,38,0.8)] dark:border-[rgba(59,130,246,0.3)] shadow-xs"
-        >
-          <span
-            className={cn(
-              "w-2 h-2 rounded-full",
-              timerRunning ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+        {/* Timer Capsule — driven by FocusTimerContext */}
+        {isActive && (
+          <div
+            className="flex items-center gap-2 px-3 py-1 rounded-full text-xs border bg-blue-50/80 border-blue-200/80 dark:bg-[rgba(14,22,38,0.8)] dark:border-[rgba(59,130,246,0.3)] shadow-xs"
+          >
+            <span
+              className={cn(
+                "w-2 h-2 rounded-full",
+                isRunning ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+              )}
+            />
+            <span className="tabular-nums font-mono text-xs font-semibold text-blue-700 dark:text-blue-300">
+              {formatTime(seconds)}
+            </span>
+            {/* short elapsed e.g. 1h 10m */}
+            {seconds >= 60 && (
+              <span className="text-orange-400 text-[10px] font-semibold hidden sm:inline">
+                {formatShort(seconds)}
+              </span>
             )}
-          />
-          <span className="tabular-nums font-mono text-xs font-semibold text-blue-700 dark:text-blue-300">
-            {formatTime(seconds)}
-          </span>
-          <button
-            onClick={() => setTimerRunning(!timerRunning)}
-            title={timerRunning ? "Pause timer" : "Resume timer"}
-            className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-white transition-colors ml-1 cursor-pointer"
-          >
-            {timerRunning ? <Pause size={12} /> : <Play size={12} />}
-          </button>
-          <button
-            onClick={() => {
-              setTimerRunning(false);
-              setSeconds(0);
-            }}
-            title="Stop timer"
-            className="text-slate-400 dark:text-(--text-muted) hover:text-red-500 transition-colors cursor-pointer"
-          >
-            <Square size={11} fill="currentColor" />
-          </button>
-        </div>
+            <button
+              onClick={isRunning ? pause : resume}
+              title={isRunning ? "Pause timer" : "Resume timer"}
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-white transition-colors ml-1 cursor-pointer"
+            >
+              {isRunning ? <Pause size={12} /> : <Play size={12} />}
+            </button>
+            <button
+              onClick={() => setShowStop(true)}
+              title="Stop timer"
+              className="text-slate-400 dark:text-(--text-muted) hover:text-red-500 transition-colors cursor-pointer"
+            >
+              <Square size={11} fill="currentColor" />
+            </button>
+          </div>
+        )}
 
         {/* Notifications Icon (placed on the LEFT side of "Add work" as requested) */}
         <div className="relative" ref={notifRef}>
@@ -346,6 +340,8 @@ export function TopBar({ userName: initialUserName = "arjunkayyil" }: TopBarProp
 
       {/* Global modal opened by "Add work" */}
       <CreateTaskModal open={isCreateOpen} onClose={closeCreate} />
+      {/* Stop-timer confirmation modal */}
+      <StopTimerModal open={showStop} onClose={() => setShowStop(false)} />
     </>
   );
 }

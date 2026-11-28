@@ -12,6 +12,7 @@ import { fetchTasks, fetchProjects } from "@/lib/api";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ProjectCard } from "@/components/dashboard/ProjectCard";
 import { ActivityRow } from "@/components/dashboard/ActivityRow";
+import { FocusTimerCard } from "@/components/timer/FocusTimerCard";
 import type { Task, Project } from "@/lib/types";
 
 export default function DashboardPage() {
@@ -48,6 +49,9 @@ export default function DashboardPage() {
         <StatCard label="Completed Tasks" value={completedTasks} icon={CheckCircle2} color="text-green-400" />
         <StatCard label="In Progress" value={inProgress} icon={Clock} color="text-purple-400" />
       </div>
+
+      {/* Focus Timer */}
+      <FocusTimerCard />
 
       {/* Project cards */}
       {projects.length > 0 && (

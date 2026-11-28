@@ -9,6 +9,7 @@ import { useState, createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { FocusTimerProvider } from "@/context/FocusTimerContext";
 
 // ── Modal context ─────────────────────────────────────────────────────────────
 interface ModalCtx {
@@ -46,19 +47,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <ModalContext.Provider
-            value={{
-              isCreateOpen,
-              openCreate: () => setIsCreateOpen(true),
-              closeCreate: () => setIsCreateOpen(false),
-              isRightPanelOpen,
-              toggleRightPanel: () => setIsRightPanelOpen(prev => !prev),
-            }}
-          >
-            {children}
-          </ModalContext.Provider>
-        </QueryClientProvider>
+        <FocusTimerProvider>
+          <QueryClientProvider client={queryClient}>
+            <ModalContext.Provider
+              value={{
+                isCreateOpen,
+                openCreate: () => setIsCreateOpen(true),
+                closeCreate: () => setIsCreateOpen(false),
+                isRightPanelOpen,
+                toggleRightPanel: () => setIsRightPanelOpen(prev => !prev),
+              }}
+            >
+              {children}
+            </ModalContext.Provider>
+          </QueryClientProvider>
+        </FocusTimerProvider>
       </ThemeProvider>
     </SessionProvider>
   );
